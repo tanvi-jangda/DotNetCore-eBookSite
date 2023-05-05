@@ -1,4 +1,4 @@
-using eBookSite.Web.Data;
+using eBookSite.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

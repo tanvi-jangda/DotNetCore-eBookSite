@@ -1,8 +1,8 @@
-﻿using eBookSite.Web.Models;
+﻿using eBookSite.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace eBookSite.Web.Data
+namespace eBookSite.DataAccess.Data
 {
     public class ApplicationDBContext:DbContext
     {

@@ -1,4 +1,4 @@
-namespace eBookSite.Web.Models
+namespace eBookSite.Models
 {
     public class ErrorViewModel
     {

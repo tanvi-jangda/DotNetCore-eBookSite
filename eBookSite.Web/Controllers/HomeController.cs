@@ -1,4 +1,4 @@
-﻿using eBookSite.Web.Models;
+﻿using eBookSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

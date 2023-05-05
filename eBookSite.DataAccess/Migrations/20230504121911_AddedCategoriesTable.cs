@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace eBookSite.Web.Migrations
+namespace eBookSite.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddedCategoriesTable : Migration

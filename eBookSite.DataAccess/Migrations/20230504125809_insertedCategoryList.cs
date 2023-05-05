@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace eBookSite.Web.Migrations
+namespace eBookSite.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class insertedCategoryList : Migration

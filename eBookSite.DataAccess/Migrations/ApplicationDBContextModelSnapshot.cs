@@ -2,20 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using eBookSite.Web.Data;
+using eBookSite.DataAccess.Data;
 
 #nullable disable
 
-namespace eBookSite.Web.Migrations
+namespace eBookSite.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20230504125809_insertedCategoryList")]
-    partial class insertedCategoryList
+    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

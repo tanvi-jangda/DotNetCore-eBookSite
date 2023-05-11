@@ -1,16 +1,16 @@
-﻿
-using eBookSite.DataAccess.Data;
+﻿using eBookSite.DataAccess.Data;
 using eBookSite.DataAccess.Repository;
 using eBookSite.DataAccess.Repository.IRepository;
 using eBookSite.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eBookSite.Web.Controllers
+namespace eBookSite.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork categoryRepo;
-         public CategoryController(IUnitOfWork db)
+        public CategoryController(IUnitOfWork db)
         {
             categoryRepo = db;
         }
@@ -45,11 +45,11 @@ namespace eBookSite.Web.Controllers
                 return NotFound();
 
             //fetch the category details from db using EF Core
-            var objCategory= categoryRepo.Category.GetById(c => c.Id == id);
+            var objCategory = categoryRepo.Category.GetById(c => c.Id == id);
 
-            if(objCategory == null)
+            if (objCategory == null)
                 return NotFound();
-            
+
             return View(objCategory);
         }
 
@@ -80,16 +80,16 @@ namespace eBookSite.Web.Controllers
             return View(objCategory);
         }
 
-        [HttpPost,ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         public IActionResult DeleteCategory(int? id)
         {
             if (id == null || id == 0)
                 return NotFound();
 
-            var category = categoryRepo.Category.GetById(m=>m.Id== id);
+            var category = categoryRepo.Category.GetById(m => m.Id == id);
 
             if (category == null)
-                    return NotFound();
+                return NotFound();
 
             categoryRepo.Category.Remove(category);
             categoryRepo.Save();

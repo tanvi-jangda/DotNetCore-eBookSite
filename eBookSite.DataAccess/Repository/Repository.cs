@@ -17,6 +17,7 @@ namespace eBookSite.DataAccess.Repository
         public Repository(ApplicationDBContext db)
         {
             this._dbContext = db;
+            this._dbSet=db.Set<T>();
         }
         public void Add(T entity)
         {

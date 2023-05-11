@@ -1,5 +1,7 @@
 ﻿
 using eBookSite.DataAccess.Data;
+using eBookSite.DataAccess.Repository;
+using eBookSite.DataAccess.Repository.IRepository;
 using eBookSite.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,14 +9,14 @@ namespace eBookSite.Web.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDBContext _dbContext;
-        public CategoryController(ApplicationDBContext db)
+        private readonly IUnitOfWork categoryRepo;
+         public CategoryController(IUnitOfWork db)
         {
-            _dbContext = db;
+            categoryRepo = db;
         }
         public IActionResult Index()
         {
-            List<Category> objCategoryList = _dbContext.Categories.ToList();
+            List<Category> objCategoryList = categoryRepo.Category.GetAll().ToList();
             return View(objCategoryList);
         }
 
@@ -29,8 +31,8 @@ namespace eBookSite.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Categories.Add(objCategory);
-                _dbContext.SaveChanges();
+                categoryRepo.Category.Add(objCategory);
+                categoryRepo.Save();
                 TempData["Success"] = "Category created successfully!";
                 return RedirectToAction("Index");
             }
@@ -43,7 +45,7 @@ namespace eBookSite.Web.Controllers
                 return NotFound();
 
             //fetch the category details from db using EF Core
-            var objCategory=_dbContext.Categories.FirstOrDefault(c => c.Id == id);
+            var objCategory= categoryRepo.Category.GetById(c => c.Id == id);
 
             if(objCategory == null)
                 return NotFound();
@@ -56,8 +58,8 @@ namespace eBookSite.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Categories.Update(objCategory);
-                _dbContext.SaveChanges();
+                categoryRepo.Category.Update(objCategory);
+                categoryRepo.Save();
                 TempData["Success"] = "Category edited successfully!";
                 return RedirectToAction("Index");
             }
@@ -70,7 +72,7 @@ namespace eBookSite.Web.Controllers
                 return NotFound();
 
             //fetch the category details from db using EF Core
-            var objCategory = _dbContext.Categories.FirstOrDefault(c => c.Id == id);
+            var objCategory = categoryRepo.Category.GetById(c => c.Id == id);
 
             if (objCategory == null)
                 return NotFound();
@@ -84,13 +86,13 @@ namespace eBookSite.Web.Controllers
             if (id == null || id == 0)
                 return NotFound();
 
-            var category = _dbContext.Categories.FirstOrDefault(m=>m.Id== id);
+            var category = categoryRepo.Category.GetById(m=>m.Id== id);
 
             if (category == null)
                     return NotFound();
 
-            _dbContext.Categories.Remove(category);
-            _dbContext.SaveChanges();
+            categoryRepo.Category.Remove(category);
+            categoryRepo.Save();
             TempData["Success"] = "Category deleted successfully!";
             return RedirectToAction("Index");
         }

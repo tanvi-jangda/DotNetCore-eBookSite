@@ -4,28 +4,22 @@ using eBookSite.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace eBookSite.DataAccess.Repository
 {
-    public class UnitOfWork : IUnitOfWork
+    public class ProductRepository : Repository<Product>,IProductRepository
     {
         private ApplicationDBContext _dbContext;
-        public ICategoryRepository Category { get; private set; }
-
-        public IProductRepository Product {get; private set;}
-
-        public UnitOfWork(ApplicationDBContext db)
+        public ProductRepository(ApplicationDBContext db):base(db)
         {
             _dbContext = db;
-            Category = new CategoryRepository(db);
-            Product = new ProductRepository(db);
         }
-
-        public void Save()
+        public void Update(Product obj)
         {
-            _dbContext.SaveChanges();
+           _dbContext.Update(obj);
         }
     }
 }

@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="Areas\Admin\Views\Product\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -33,13 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Areas\Admin\Views\Product\Create.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Product\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Product\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Product\Edit.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Areas\Admin\Views\Product\Edit.cshtml" />
+    <Folder Include="wwwroot\images\product\" />
   </ItemGroup>
 
 </Project>

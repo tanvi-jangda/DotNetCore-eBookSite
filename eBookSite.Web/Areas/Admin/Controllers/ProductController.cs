@@ -82,7 +82,7 @@ namespace eBookSite.Web.Areas.Admin.Controllers
                     {
                         file.CopyTo(fileStream);
                     }
-                    obj.Product.ImageURL = @"images\product\" + fileName;
+                    obj.Product.ImageURL = @"\images\product\" + fileName;
                 }
                 if (obj.Product.Id == 0)
                 {

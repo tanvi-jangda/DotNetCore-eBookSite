@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0-preview.4.23260.4" />
   </ItemGroup>
 
 </Project>

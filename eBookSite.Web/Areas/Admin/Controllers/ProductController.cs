@@ -3,6 +3,7 @@ using eBookSite.DataAccess.Repository;
 using eBookSite.DataAccess.Repository.IRepository;
 using eBookSite.Models;
 using eBookSite.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -11,6 +12,7 @@ using System.Drawing;
 namespace eBookSite.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork productRepo;

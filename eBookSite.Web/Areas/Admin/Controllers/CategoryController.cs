@@ -2,11 +2,13 @@
 using eBookSite.DataAccess.Repository;
 using eBookSite.DataAccess.Repository.IRepository;
 using eBookSite.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eBookSite.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork categoryRepo;

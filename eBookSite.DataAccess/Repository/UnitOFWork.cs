@@ -16,11 +16,15 @@ namespace eBookSite.DataAccess.Repository
 
         public IProductRepository Product {get; private set;}
 
+        public IShoppingCartRepository ShoppingCart { get; private set;}
+        public IApplicationUserRepository ApplicationUser { get; private set; }
         public UnitOfWork(ApplicationDBContext db)
         {
             _dbContext = db;
             Category = new CategoryRepository(db);
             Product = new ProductRepository(db);
+            ShoppingCart = new ShoppingCartRepository(db);
+            ApplicationUser = new ApplicationUserRepository(db);
         }
 
         public void Save()

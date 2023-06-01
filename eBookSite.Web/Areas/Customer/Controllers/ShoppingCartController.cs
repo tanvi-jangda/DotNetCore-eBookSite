@@ -4,8 +4,15 @@ using eBookSite.Models;
 using eBookSite.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.FinancialConnections;
+using Stripe;
 using System.Security.Claims;
 using System.Web.Helpers;
+using Stripe.Checkout;
+using Session = Stripe.Checkout.Session;
+using SessionService = Stripe.Checkout.SessionService;
+using SessionCreateOptions = Stripe.Checkout.SessionCreateOptions;
+using Microsoft.Extensions.Options;
 
 namespace eBookSite.Web.Areas.Customer.Controllers
 {
@@ -112,7 +119,7 @@ namespace eBookSite.Web.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == userId, includeProperties: "Product");
-            ShoppingCartVM.OrderHeader.OrderDate=DateTime.Now;
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             ShoppingCartVM.OrderHeader.ApplicationUserId=userId;
 
             //ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetById(m => m.Id == userId);
@@ -140,12 +147,62 @@ namespace eBookSite.Web.Areas.Customer.Controllers
                 _unitOfWork.OrderDetail.Add(orderDetail);
                 _unitOfWork.Save();
             }
-            return RedirectToAction("OrderConfirmation", new { id = ShoppingCartVM.OrderHeader.Id });
+
+            var domain = "https://localhost:7291/";
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = domain + $"Customer/ShoppingCart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                CancelUrl = domain + "Customer/ShoppingCart/Index",
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+            };
+            
+
+            foreach(var item in ShoppingCartVM.ShoppingCartList)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)item.Price*100,
+                        Currency = "inr",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title
+                        }
+                    },
+                    Quantity = item.Count
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+            _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+            Response.Headers.Add("Location", session.Url);
+
+            return new StatusCodeResult(303);
         }
 
         public IActionResult OrderConfirmation(int id)
         {
-            return View(id);
+            OrderHeader orderHeader= _unitOfWork.OrderHeader.GetById(m=>m.Id==id,includeProperties:"ApplicationUser");
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId);
+
+            if (session.PaymentStatus.ToLower() == "paid")
+            {
+                _unitOfWork.OrderHeader.UpdateStripePaymentID(id, session.Id, session.PaymentIntentId);
+                _unitOfWork.OrderHeader.UpdateStatus(id, "Approved", "Approved");
+                _unitOfWork.Save();
+            }
+
+            //remove the cart items
+            var shoppingCartList = _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCartList);
+            _unitOfWork.Save();
+            return View("OrderConfirmation", id);
         }
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCartObj)
         {

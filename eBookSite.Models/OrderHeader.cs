@@ -27,8 +27,9 @@ namespace eBookSite.Models
         public string? TrackingNumber { get; set; }
         public string? Carrier { get; set; }
 
-        //public string? SessionId { get; set; }
+        public string? SessionId { get; set; }
         public string? PaymentIntentId { get; set; }
+        public DateTime PaymentDate { get; set; }
 
         [Required]
         public string PhoneNumber { get; set; }

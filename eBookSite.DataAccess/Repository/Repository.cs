@@ -44,10 +44,20 @@ namespace eBookSite.DataAccess.Repository
             return query.ToList();
         }
 
-        public T GetById(Expression<Func<T, bool>> filter)
+        public T GetById(Expression<Func<T, bool>> filter,string? includeProperties = null)
         {
-           IQueryable<T> query = _dbSet.Where(filter);
-            return query.FirstOrDefault(); ;
+            IQueryable<T> query=_dbSet;
+
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
         public void Remove(T entity)

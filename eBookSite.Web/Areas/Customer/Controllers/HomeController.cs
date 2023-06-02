@@ -21,6 +21,15 @@ namespace eBookSite.Web.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            //set the session again after login
+            var claimsIdentity=(ClaimsIdentity)User.Identity;
+            var claim=claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (claim!=null)
+            {
+                HttpContext.Session.SetInt32("SessionShoppingCart",
+                   _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == claim.Value).Count());
+            }
             var productList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
             return View(productList);
         }
@@ -52,21 +61,21 @@ namespace eBookSite.Web.Areas.Customer.Controllers
                 //update database
                 cartFromDB.Count += cartObj.Count;
                 _unitOfWork.ShoppingCart.update(cartFromDB);
+                _unitOfWork.Save();
             }
             else
             {
                 //add to db
                 _unitOfWork.ShoppingCart.Add(cartObj);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32("SessionShoppingCart",
+                    _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == userId).Count());
             }
 
-            _unitOfWork.Save();
+            
 
             TempData["Success"] = "Cart updated successfully!";
             return RedirectToAction(nameof(Index));
-        }
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -14,14 +14,17 @@ namespace eBookSite.Web.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<OrderController> _logger;
 
         [BindProperty]
 
         public OrderVM OrderVM { get; set; }
 
-        public OrderController(IUnitOfWork unitOfWork)
+        public OrderController(IUnitOfWork unitOfWork, ILogger<OrderController> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+
         }
 
         public IActionResult Index()
@@ -33,9 +36,10 @@ namespace eBookSite.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll(string status)
         {
+            IEnumerable<OrderHeader> objOrderHeaderList=null;
             try
             {
-                IEnumerable<OrderHeader> objOrderHeaderList = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
+                objOrderHeaderList = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
 
                 switch (status)
                 {
@@ -52,12 +56,13 @@ namespace eBookSite.Web.Areas.Admin.Controllers
                         break;
 
                 }
-                return Json(new { data = objOrderHeaderList });
+                
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
             }
+            return Json(new { data = objOrderHeaderList });
         }
 
         public IActionResult Details(int orderId)
@@ -72,7 +77,7 @@ namespace eBookSite.Web.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
             return View(OrderVM);
         }
@@ -80,9 +85,9 @@ namespace eBookSite.Web.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UpdateOrderDetail()
         {
+            var orderFromDB = _unitOfWork.OrderHeader.GetById(m => m.Id == OrderVM.OrderHeader.Id);
             try
             {
-                var orderFromDB = _unitOfWork.OrderHeader.GetById(m => m.Id == OrderVM.OrderHeader.Id);
                 orderFromDB.Name = OrderVM.OrderHeader.Name;
                 orderFromDB.State = OrderVM.OrderHeader.State;
                 orderFromDB.StreetAddress = OrderVM.OrderHeader.StreetAddress;
@@ -100,12 +105,13 @@ namespace eBookSite.Web.Areas.Admin.Controllers
                 _unitOfWork.Save();
 
                 TempData["Success"] = "Order details updated successfully";
-                return RedirectToAction("Details", new { orderId = orderFromDB.Id });
+                
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
             }
+            return RedirectToAction("Details", new { orderId = orderFromDB.Id });
         }
         public IActionResult StartProcessing()
         {
@@ -117,7 +123,7 @@ namespace eBookSite.Web.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
             return RedirectToAction("Details", new { orderId = OrderVM.OrderHeader.Id });
         }
@@ -137,7 +143,7 @@ namespace eBookSite.Web.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
             return RedirectToAction("Details", new { orderId = OrderVM.OrderHeader.Id });
         }
@@ -169,7 +175,7 @@ namespace eBookSite.Web.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
             return RedirectToAction("Details", new { orderId = OrderVM.OrderHeader.Id });
         }

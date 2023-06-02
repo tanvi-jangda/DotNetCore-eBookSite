@@ -55,14 +55,17 @@ namespace eBookSite.Web.Areas.Customer.Controllers
             cartFromDB.Count+=1;
             _unitOfWork.ShoppingCart.update(cartFromDB);
             _unitOfWork.Save();
+
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Minus(int Id)
         {
-            var cartFromDB = _unitOfWork.ShoppingCart.GetById(m => m.Id == Id);
+            var cartFromDB = _unitOfWork.ShoppingCart.GetById(m => m.Id == Id,tracked:true);
             if(cartFromDB.Count==1)
             {
+                HttpContext.Session.SetInt32("SessionShoppingCart",
+                _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == cartFromDB.ApplicationUserId).Count() - 1);
                 _unitOfWork.ShoppingCart.Remove(cartFromDB);
             }
             else
@@ -77,8 +80,11 @@ namespace eBookSite.Web.Areas.Customer.Controllers
 
         public IActionResult Remove(int Id)
         {
-            var cartFromDB=_unitOfWork.ShoppingCart.GetById(m=>m.Id==Id);
+            var cartFromDB=_unitOfWork.ShoppingCart.GetById(m=>m.Id==Id,tracked:true);
+           
             _unitOfWork.ShoppingCart.Remove(cartFromDB);
+             HttpContext.Session.SetInt32("SessionShoppingCart",
+              _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == cartFromDB.ApplicationUserId).Count()-1);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -202,6 +208,7 @@ namespace eBookSite.Web.Areas.Customer.Controllers
             var shoppingCartList = _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCartList);
             _unitOfWork.Save();
+            HttpContext.Session.Clear();
             return View("OrderConfirmation", id);
         }
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCartObj)

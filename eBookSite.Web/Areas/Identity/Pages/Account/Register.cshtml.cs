@@ -121,13 +121,7 @@ namespace eBookSite.Web.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!_roleManager.RoleExistsAsync("Customer").GetAwaiter().GetResult())
-            {
-                _roleManager.CreateAsync(new IdentityRole("Customer")).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole("Admin")).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole("Employee")).GetAwaiter().GetResult();
-            }
-
+           
             Input = new()
             {
                 RoleList = _roleManager.Roles.Select(m => m.Name).Select(i => new SelectListItem

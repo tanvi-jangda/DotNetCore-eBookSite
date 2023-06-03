@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using eBookSite.Utility;
 using Stripe;
+using eBookSite.DataAccess.DBInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 //register category service
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender,EmailSender>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +50,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
+SeedDatabase();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -57,3 +61,12 @@ app.MapControllerRoute(
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+        dbInitializer.Initialize();
+    }
+}

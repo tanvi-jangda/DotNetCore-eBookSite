@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
+using eBookSite.DataAccess.Repository.IRepository;
+using System.Security.Claims;
 
 namespace eBookSite.Web.Areas.Identity.Pages.Account
 {
@@ -21,7 +24,6 @@ namespace eBookSite.Web.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-
         public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;

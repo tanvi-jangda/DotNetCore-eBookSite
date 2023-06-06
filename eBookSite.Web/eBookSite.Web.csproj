@@ -6,9 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0-preview.4.23260.4" />
@@ -41,8 +41,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
+	
+	<ItemGroup>
+		<Folder Include="wwwroot\images\product\" />
+	</ItemGroup>
+  <!--<ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Product\Delete.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
   </ItemGroup>
@@ -52,15 +55,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\product\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <UpToDateCheckInput Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

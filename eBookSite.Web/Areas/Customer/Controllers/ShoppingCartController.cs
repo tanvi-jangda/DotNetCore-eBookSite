@@ -20,12 +20,13 @@ namespace eBookSite.Web.Areas.Customer.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-       
+       private readonly IConfiguration _configuration;
         [BindProperty]
         public ShoppingCartVM ShoppingCartVM{get;set;}
-        public ShoppingCartController(IUnitOfWork unitOfWork)
+        public ShoppingCartController(IUnitOfWork unitOfWork,IConfiguration config)
         {
             _unitOfWork = unitOfWork;
+            _configuration = config;
         }
      
         [Authorize]
@@ -154,7 +155,7 @@ namespace eBookSite.Web.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-            var domain = "https://localhost:7291/";
+            var domain = Request.Scheme + "://" + Request.Host.Value + "/";
             var options = new SessionCreateOptions
             {
                 SuccessUrl = domain + $"Customer/ShoppingCart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",

@@ -16,5 +16,9 @@ namespace eBookSite.DataAccess.Repository
         {
             _dbContext = db;   
         }
+        public void Update(ApplicationUser obj)
+        {
+            _dbContext.Update(obj);
+        }
     }
 }

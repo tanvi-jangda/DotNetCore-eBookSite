@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using eBookSite.Utility;
 using Stripe;
 using eBookSite.DataAccess.DBInitializer;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,20 +36,34 @@ builder.Services.ConfigureApplicationCookie(options =>
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IEmailSender,EmailSender>();
+//builder.Services.AddScoped<IEmailSender,EmailSender>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/500");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
+    app.UseExceptionHandler("/Error/500");
+}
+
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+//for serving any files outside wwwroot folder
 app.UseStaticFiles();
+ // new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(
+//           Path.Combine(builder.Environment.ContentRootPath, "EmailTemplates")),
+//    RequestPath = "/StaticFiles"
+//});
 app.UseSession();
 SeedDatabase();
 app.UseRouting();

@@ -13,6 +13,7 @@ using Session = Stripe.Checkout.Session;
 using SessionService = Stripe.Checkout.SessionService;
 using SessionCreateOptions = Stripe.Checkout.SessionCreateOptions;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Hosting;
 
 namespace eBookSite.Web.Areas.Customer.Controllers
 {
@@ -21,12 +22,14 @@ namespace eBookSite.Web.Areas.Customer.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         [BindProperty]
         public ShoppingCartVM ShoppingCartVM{get;set;}
-        public ShoppingCartController(IUnitOfWork unitOfWork,IConfiguration config)
+        public ShoppingCartController(IUnitOfWork unitOfWork,IConfiguration config, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _configuration = config;
+            _webHostEnvironment= webHostEnvironment;
         }
      
         [Authorize]
@@ -209,6 +212,10 @@ namespace eBookSite.Web.Areas.Customer.Controllers
             var shoppingCartList = _unitOfWork.ShoppingCart.GetAll(m => m.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCartList);
             _unitOfWork.Save();
+
+            //send order confirmation mail to user
+            SendOrderConfirmationMail(shoppingCartList, id);
+
             HttpContext.Session.Clear();
             return View("OrderConfirmation", id);
         }
@@ -223,6 +230,33 @@ namespace eBookSite.Web.Areas.Customer.Controllers
                 else
                     return shoppingCartObj.Product.Price100;
             }
+        }
+
+        public void SendOrderConfirmationMail(List<ShoppingCart> shoppingCartList, int id)
+        {
+            Utility.EmailSender emailSenderObj = new Utility.EmailSender(_configuration);
+         
+            string body = string.Empty;
+            string pathToFile = _webHostEnvironment.WebRootPath
+                          + Path.DirectorySeparatorChar.ToString()
+                          + "Templates" 
+                          + Path.DirectorySeparatorChar.ToString()
+                          + "EmailTemplates"
+                          + Path.DirectorySeparatorChar.ToString()
+                          + "OderConfirmationTemplate.html";
+
+            var quantity = HttpContext.Session.GetInt32("SessionShoppingCart");
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetById(m => m.Id == id, includeProperties: "ApplicationUser");
+
+
+            using (StreamReader reader = System.IO.File.OpenText(pathToFile))
+            {
+                body = reader.ReadToEnd();
+            }
+            body = body.Replace("[OrderNumber]", Convert.ToString(orderHeader.Id));
+            body = body.Replace("[Total]", Convert.ToString(orderHeader.OrderTotal));
+            body = body.Replace("[Quantity]", Convert.ToString(quantity));
+            emailSenderObj.SendEmail(orderHeader.ApplicationUser.Email, "Order Confirmation - "+ Convert.ToString(orderHeader.Id),body);
         }
     }
 }

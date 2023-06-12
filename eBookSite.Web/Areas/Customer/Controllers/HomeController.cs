@@ -13,11 +13,9 @@ namespace eBookSite.Web.Areas.Customer.Controllers
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
             _unitOfWork = unitOfWork;
         }
 
@@ -44,7 +42,6 @@ namespace eBookSite.Web.Areas.Customer.Controllers
 
             }
             var productList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
-
             return View(productList);
         }
         public IActionResult Details(int productId)

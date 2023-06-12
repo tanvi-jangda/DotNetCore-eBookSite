@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0-preview.4.23260.4" />
+    <PackageReference Include="MimeKit" Version="4.0.0" />
   </ItemGroup>
 
 

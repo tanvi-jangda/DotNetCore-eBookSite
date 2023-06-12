@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -45,6 +45,10 @@
 	<ItemGroup>
 		<Folder Include="wwwroot\images\product\" />
 	</ItemGroup>
+	
+	<!--<ItemGroup>
+	  <None Include="wwwroot\OderConfirmationTemplate.html" />
+	</ItemGroup>-->
   <!--<ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Product\Delete.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
